@@ -138,9 +138,10 @@ validSet = set(string.ascii_letters) | set(string.digits) | set("_")
 def SanitizeNames(names, field):
 	newNames = []
 	for name in names:
-		if (field == "SID" and not name[0].isalpha()):
-			name = "s%s" %name
-		newName = re.sub("[^_A-Za-z0-9]+","",name)
+		newName = name
+		if (field == "SID" and not newName[0].isalpha()):
+			newName = "s%s" %newName
+		newName = re.sub("[^_.A-Za-z0-9]+",".",newName)
 		if newName != name:
 			print("Warning: %s: %s renamed %s\n" %(field,name,newName))
 		newNames.append(name)

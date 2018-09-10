@@ -14,25 +14,24 @@ if (len(sys.argv) > 0):
 	count = 0
 	while count < len(sys.argv):
 		if sys.argv[count] == '-h' or sys.argv[count] == '-H' or sys.argv[count] == '--help':
-			print("Valid command line arguments:")
-			print("-s\tSample sheet filepath")
-			print("-p\tPrimer sheet filepath")
-			print("-b\tBarcode lookup table filepath")
+			print("-B FILENAME, --barcodes_file FILENAME\tfile with barcodes")
+			print("-P FILENAME, --primer_file FILENAME\tfile with primers")
+			print("-S FILENAME, --sample_metadata FILENAME\tfile with sample metadata")
 			print("-n\tCustom output samplesheet name. Default is {YearMonthDay}SampleSheet.txt")
 			exit(0)
-		if sys.argv[count] == "-s" or sys.argv[count] == '-S':
+		if sys.argv[count] == "--sample_metadata" or sys.argv[count] == '-S':
 			count += 1
 			if (count < len(sys.argv)):
 				sampleSheetName = sys.argv[count]
-		elif sys.argv[count] == "-p" or sys.argv[count] == '-P':
+		elif sys.argv[count] == "--primer_file" or sys.argv[count] == '-P':
 			count += 1
 			if (count < len(sys.argv)):
 				primerSheetName = sys.argv[count]
-		elif sys.argv[count] == "-b" or sys.argv[count] == '-B':
+		elif sys.argv[count] == "--barcodes_file" or sys.argv[count] == '-B':
 			count += 1
 			if (count < len(sys.argv)):
 				barcodeLookupName = sys.argv[count]
-		elif sys.argv[count] == "-n" or sys.argv[count] == '-N':
+		elif sys.argv[count] == "--output_name" or sys.argv[count] == '-N':
 			count += 1
 			if (count < len(sys.argv)):
 				newSampleSheetName = sys.argv[count]
