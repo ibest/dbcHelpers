@@ -17,7 +17,7 @@ if (len(sys.argv) > 0):
 			print("-B FILENAME, --barcodes_file FILENAME\tfile with barcodes")
 			print("-P FILENAME, --primer_file FILENAME\tfile with primers")
 			print("-S FILENAME, --sample_metadata FILENAME\tfile with sample metadata")
-			print("-n\tCustom output samplesheet name. Default is {YearMonthDay}SampleSheet.txt")
+			print("-n FILENAME\tCustom output samplesheet name. Default is {YearMonthDay}SampleSheet.txt")
 			exit(0)
 		if sys.argv[count] == "--sample_metadata" or sys.argv[count] == '-S':
 			count += 1
@@ -54,6 +54,7 @@ sampleSheet.ReadFile(sampleSheetName)
 primerSheet.ReadFile(primerSheetName)
 barcodeLookup.ReadFile(barcodeLookupName)
 
+
 print("Sanitizing names...")
 sampleSheet.sampleIDs = Validation.SanitizeNames(sampleSheet.sampleIDs, "SID")
 sampleSheet.barcodeIDs = Validation.SanitizeNames(sampleSheet.barcodeIDs, "BID")
@@ -66,6 +67,7 @@ barcodeLookup.barcodeNames = Validation.SanitizeNames(barcodeLookup.barcodeNames
 
 print("Checking for primer collisions...")
 primerCollisions = Validation.CheckPrimerCollision(primerSheet.p5PrimersIDs, primerSheet.p5Sequences)
+primerCollisions[len(primerCollisions):] = Validation.CheckPrimerCollision(primerSheet.p7PrimerIDs, primerSheet.p7Sequences)
 
 print("Checking for primers not represented in the sample sheet...")
 primersRepresented = Validation.CheckPrimersRepresented(sampleSheet.primerPairIDs, primerSheet.pairIDs)

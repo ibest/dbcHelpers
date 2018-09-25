@@ -7,31 +7,70 @@ def HammingDist(p1, p2, s1, s2):
 	sl = s1 if len(s1) >= len(s2) else s2
 	ps = p1 if len(s1) < len(s2) else p2
 	pl = p1 if len(s1) >= len(s2) else p2
-	for i in range(4):
-		diff = 0
-		diffs = []
+	lenDiff = len(sl) - len(ss)
+	for i in range(5):
+		diffs = i;
+		if (lenDiff < i):
+			diffs += i - lenDiff
+		matches = []
+		j = 0
+		for k in range(i,len(sl)):
+			if j >= len(ss):
+				break
+			if (CheckNucleotidesDifferent(ss[j],sl[k])):
+				diffs += 1
+			else:
+				matches.append((j,k))
+			j += 1
+		if (diffs <= 4):
+			PrintPrimerCollision(ps,pl,ss,sl,matches)
+			return True
+		diffs = i
+		if (lenDiff < i):
+			diffs += i - lenDiff
+		matches = []
 		j = 0
 		for k in range(i,len(sl)):
 			if k >= len(ss):
 				break
-			if (CheckNucleotideMatch(ss[j],sl[k])):
-				diff += 1
+			if (CheckNucleotidesDifferent(ss[k],sl[j])):
+				diffs += 1
 			else:
-				diffs.append((j,k))
+				matches.append((k,j))
 			j += 1
-		if (diff <= 4):
-			print("Error: %s collides with %s" %(ps,pl))
-			print("%s %s " %(ss,sl))
-			for l in range(len(ss)):
-				print(str(l)[-1], end='')
-			print(" ", end='')
-			for l in range(len(sl)):
-				print(str(l)[-1], end='')
-			print("\n")
+		if (diffs <= 4):
+			PrintPrimerCollision(ps,pl,ss,sl,matches)
 			return True
 	return False
 
-def CheckNucleotideMatch(c1, c2):
+def PrintPrimerCollision(ps, pl, ss, sl, matches):
+	print("Error: %s collides with %s" %(pl,ps))
+	ssWidth = len(ss)
+	slWidth = len(sl)
+	diff = matches[0][0] - matches[0][1]
+	if diff < 0:
+		ssWidth += abs(diff)
+	elif diff > 0:
+		slWidth += abs(diff)
+	matchIndices = []
+	for match in matches:
+		if diff == 0:
+			matchIndices.append(match[0])
+		elif diff > 0:
+			matchIndices.append(match[0])
+		else:
+			matchIndices.append(match[1])
+	print('{:>{width}}'.format(sl, width=slWidth))
+	for i in range(slWidth):
+		if i in matchIndices:
+			print("|", end='')
+		else:
+			print(" ", end='')
+	print()
+	print('{:>{width}}'.format(ss, width=ssWidth))
+	print("\n")
+
+def CheckNucleotidesDifferent(c1, c2):
 	c1Set = CreateNucleotideSet(c1)
 	c2Set = CreateNucleotideSet(c2)
 	if (len(c1Set & c2Set) == 0):
@@ -133,8 +172,6 @@ def CheckDuplicateBarcodes(duplicates, barcodeIDs, primerIDs, sampleBarcodes, sa
 	return error
 
 
-validSet = set(string.ascii_letters) | set(string.digits) | set("_")
-
 def SanitizeNames(names, field):
 	newNames = []
 	for name in names:
@@ -144,5 +181,5 @@ def SanitizeNames(names, field):
 		newName = re.sub("[^_.A-Za-z0-9]+",".",newName)
 		if newName != name:
 			print("Warning: %s: %s renamed %s\n" %(field,name,newName))
-		newNames.append(name)
+		newNames.append(newName)
 	return newNames
